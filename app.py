@@ -8,24 +8,24 @@ scaler = joblib.load("scaler.pkl")
 
 st.title("Prediksi Risiko Osteoporosis")
 
-# ========== INPUT (TIDAK BISA DIKETIK) ==========
+# ========== INPUT ==========
 usia = st.slider("Usia (tahun)", 18, 100, 30)
 
 jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
 perubahan_hormon = st.selectbox("Perubahan Hormon", ["Normal", "Pasca menopause"])
-riwayat_keluarga = st.selectbox("Riwayat Keluarga Osteoporosis", ["Tidak", "Iya"])
+riwayat_keluarga = st.selectbox("Riwayat Keluarga Osteoporosis", ["Tidak", "Ya"])
 ras = st.selectbox("Ras / Etnis", ["Asia", "Kaukasia", "Afrika-Amerika"])
 berat_badan = st.selectbox("Berat Badan", ["Normal", "Kurus"])
 kalsium = st.selectbox("Asupan Kalsium", ["Cukup", "Rendah"])
 vitamin_d = st.selectbox("Asupan Vitamin D", ["Cukup", "Tidak cukup"])
 aktivitas = st.selectbox("Aktivitas Fisik", ["Aktif", "Kurang aktif"])
 merokok = st.selectbox("Merokok", ["Tidak", "Ya"])
-alkohol = st.selectbox("Konsumsi Alkohol", ["Tidak", "Iya"])
+alkohol = st.selectbox("Konsumsi Alkohol", ["Tidak", "Sedang"])
 kondisi_medis = st.selectbox("Kondisi Medis", ["Gangguan tiroid", "Tidak ada", "Radang sendi"])
 obat = st.selectbox("Obat-obatan", ["Kortikosteroid", "Tidak ada"])
 patah = st.selectbox("Riwayat Patah Tulang", ["Tidak", "Ya"])
 
-# ========== MAPPING KE ANGKA ==========
+# ========== MAPPING ==========
 map_jk = {"Perempuan":0,"Laki-laki":1}
 map_hormon = {"Normal":0,"Pasca menopause":1}
 map_keluarga = {"Tidak":0,"Ya":1}
@@ -35,12 +35,12 @@ map_kalsium = {"Cukup":0,"Rendah":1}
 map_vitd = {"Tidak cukup":0,"Cukup":1}
 map_aktivitas = {"Aktif":0,"Kurang aktif":1}
 map_rokok = {"Tidak":0,"Ya":1}
-map_alkohol = {"Tidak ada data":0,"Sedang":1}
+map_alkohol = {"Tidak":0,"Sedang":1}
 map_medis = {"Gangguan tiroid":0,"Tidak ada":1,"Radang sendi":2}
 map_obat = {"Kortikosteroid":0,"Tidak ada":1}
 map_patah = {"Tidak":0,"Ya":1}
 
-# ========== SUSUN DATA ==========
+# ========== DATA ==========
 data = np.array([[
     usia,
     map_jk[jenis_kelamin],
