@@ -9,7 +9,7 @@ scaler = joblib.load("scaler.pkl")
 st.title("Prediksi Risiko Osteoporosis")
 
 # ========== INPUT ==========
-usia = st.slider("Usia (tahun)", 18, 100, 30)
+usia = st.number_input("Usia (tahun)", min_value=18, max_value=100, value=30, step=1)
 
 jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
 perubahan_hormon = st.selectbox("Perubahan Hormon", ["Normal", "Pasca menopause"])
@@ -63,7 +63,22 @@ data_scaled = scaler.transform(data)
 # ========== PREDIKSI ==========
 if st.button("Prediksi"):
     hasil = model.predict(data_scaled)
+    
     if hasil[0] == 1:
         st.error("⚠️ Pasien Berisiko Mengalami Osteoporosis")
+        st.markdown("""
+        **Penjelasan:**  
+        Pasien diprediksi berisiko osteoporosis karena kombinasi faktor seperti usia,
+        jenis kelamin, perubahan hormon, riwayat keluarga, gaya hidup (merokok, alkohol),
+        aktivitas fisik yang rendah, atau kondisi medis tertentu yang dapat
+        mempercepat pengeroposan tulang.
+        """)
     else:
         st.success("✅ Pasien Tidak Berisiko Osteoporosis")
+        st.markdown("""
+        **Penjelasan:**  
+        Pasien diprediksi tidak berisiko osteoporosis karena faktor-faktor yang dimiliki
+        masih dalam batas aman, seperti usia yang lebih muda, aktivitas fisik cukup,
+        asupan kalsium dan vitamin D yang baik, serta tidak adanya faktor risiko besar
+        seperti riwayat patah tulang atau penyakit tertentu.
+        """)
