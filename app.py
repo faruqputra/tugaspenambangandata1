@@ -2,15 +2,13 @@ import streamlit as st
 import joblib
 import numpy as np
 
-# Load model dan scaler
 model = joblib.load("model_dt.pkl")
-scaler = joblib.load("scaler.pkl")
+scaler = joblib.load("scaler.pkl")  # hapus kalau training tanpa scaler
 
-st.title("Prediksi Risiko Osteoporosis")
+st.title("Prediksi Osteoporosis")
 
 # ========== INPUT ==========
-usia = st.number_input("Usia (tahun)", min_value=18, max_value=100, value=30, step=1)
-
+usia = st.number_input("Usia (tahun)", 18, 100, 30, 1)
 jenis_kelamin = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
 perubahan_hormon = st.selectbox("Perubahan Hormon", ["Normal", "Pasca menopause"])
 riwayat_keluarga = st.selectbox("Riwayat Keluarga Osteoporosis", ["Tidak", "Ya"])
@@ -40,7 +38,6 @@ map_medis = {"Gangguan tiroid":0,"Tidak ada":1,"Radang sendi":2}
 map_obat = {"Kortikosteroid":0,"Tidak ada":1}
 map_patah = {"Tidak":0,"Ya":1}
 
-# ========== DATA ==========
 data = np.array([[
     usia,
     map_jk[jenis_kelamin],
@@ -62,23 +59,24 @@ data_scaled = scaler.transform(data)
 
 # ========== PREDIKSI ==========
 if st.button("Prediksi"):
-    hasil = model.predict(data_scaled)
-    
-    if hasil[0] == 1:
-        st.error("⚠️ Pasien Berisiko Mengalami Osteoporosis")
-        st.markdown("""
-        **Penjelasan:**  
-        Pasien diprediksi berisiko osteoporosis karena kombinasi faktor seperti usia,
-        jenis kelamin, perubahan hormon, riwayat keluarga, gaya hidup (merokok, alkohol),
-        aktivitas fisik yang rendah, atau kondisi medis tertentu yang dapat
-        mempercepat pengeroposan tulang.
-        """)
+    hasil = model.predict(data_scaled)[0]
+
+    faktor = []
+    if usia >= 60: faktor.append("usia lanjut")
+    if jenis_kelamin == "Perempuan": faktor.append("jenis kelamin perempuan")
+    if perubahan_hormon == "Pasca menopause": faktor.append("pasca menopause")
+    if riwayat_keluarga == "Ya": faktor.append("riwayat keluarga")
+    if berat_badan == "Kurus": faktor.append("berat badan rendah")
+    if aktivitas == "Kurang aktif": faktor.append("aktivitas fisik rendah")
+    if patah == "Ya": faktor.append("riwayat patah tulang")
+    if merokok == "Ya": faktor.append("merokok")
+    if alkohol == "Sedang": faktor.append("konsumsi alkohol")
+
+    if hasil == 1:
+        st.error("❌ Menyebabkan Osteoporosis")
+        st.write("Faktor yang memengaruhi:")
+        for f in faktor:
+            st.write("- ", f)
     else:
-        st.success("✅ Pasien Tidak Berisiko Osteoporosis")
-        st.markdown("""
-        **Penjelasan:**  
-        Pasien diprediksi tidak berisiko osteoporosis karena faktor-faktor yang dimiliki
-        masih dalam batas aman, seperti usia yang lebih muda, aktivitas fisik cukup,
-        asupan kalsium dan vitamin D yang baik, serta tidak adanya faktor risiko besar
-        seperti riwayat patah tulang atau penyakit tertentu.
-        """)
+        st.success("✅ Tidak Menyebabkan Osteoporosis")
+        st.write("Faktor risiko besar tidak ditemukan.")
